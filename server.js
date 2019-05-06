@@ -51,6 +51,19 @@ app.get("/departments", function (req, res) {
     });
 });
 
+app.get("/repository", function (req, res) {
+    res.sendFile(path.join(__dirname, "/views/repository.html"));
+});
+app.get("/git", function (req, res) {
+    res.sendFile(path.join(__dirname, "/views/git.html"));
+});
+app.get("/ir", function (req, res) {
+    res.sendFile(path.join(__dirname, "/views/ir.html"));
+});
+app.get("/contact", function (req, res) {
+    res.sendFile(path.join(__dirname, "/views/contact.html"));
+});
+
 app.use((req, res) => {
     res.status(404).send("not found!!!");
 });
@@ -62,6 +75,7 @@ app.use((req, res) => {
 //dataService.initialize().catch(function () {
 //    app.listen(HTTP_PORT);
 //});
+
 // setup http server to listen on HTTP_PORT
 app.listen(HTTP_PORT, function(){
     console.log("Express http server listening on 8080");
