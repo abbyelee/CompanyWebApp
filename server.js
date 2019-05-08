@@ -2,9 +2,17 @@ var HTTP_PORT = process.env.PORT || 8080;
 var express = require("express");
 var path = require("path");
 var app = express();
+var handlebars = require ('handlebars');
 var dataService = require("./data-service.js");
 const fs = require('fs');
-
+var multer = require ('multer');
+const storage = multer.diskStorage({
+    destination: "./public/images/uploaded",
+    filename: function(req,file,cb){
+        cb(null,Date.now()+path.extname(file.originalname));
+    }
+});
+const upload = multer({storage:storage});
 app.use(express.static('public'));
 // setup a 'route' to listen on the default url path
 app.get("/", function(req, res){
@@ -16,39 +24,43 @@ app.get("/home", function (req, res) {
 app.get("/about", function (req, res) {
     res.sendFile(path.join(__dirname,"/views/about.html"));
 });
-app.get("/employees", function (req, res) {
-   // res.sendFile(path.join(__dirname, "/data/employees.json"));
-    
-    fs.readFile('./data/employees.json', (err, data) => {
-       // if (err) throw err;
-        var obj= dataService.getAllEmployees(data);
-        //var obj=JSON.parse(data);//json convert to string
-        console.log(obj);
-      // res.json(null);
+
+app.get("/image/add", function (req, res) {
+    res.sendFile(path.join(__dirname, "/views/addImage.html"));
+});
+app.post("/images/add",upload.single("imageFile"),(req,res) =>{
+    res.redirect("/images");
+});
+app.get("/images", (req, res) => {//we need to json file step3
+    fs.readdir("./public/images/uploaded", function (err, items) {
+        console.log(items);
+        res.send (items);
+        for (var i = 0; i < items.length; i++) {
+            console.log(items[i]);
+        }
     });
-   
-   // res.json(data/employees.json);
+
+});
+app.get("/employee/add", function (req, res) {
+    res.sendFile(path.join(__dirname, "/views/addEmployee.html"));
+});
+app.get("/employees", function (req, res) {
+    fs.readFile('./data/employees.json', (err, data) => {
+        var obj= dataService.getAllEmployees(data);
+        res.send(obj);
+    });
 });
 app.get("/managers", function (req, res) {
-    res.send("managers");
-    fs.readFile('./data/employees.json', (err, data) => {
-        // if (err) throw err;
-        if (data.isManager==true){
-        var obj = JSON.parse(data);//json convert to string
-        console.log(obj);
-        }
-        // res.json(null);
-    });
+    dataService.getManagers()
+        .then(function (manager) {
+            res.json(manager)
+        }).catch(function (errmsg) {
+            console.log(errmsg);
+        });
 });
+   
 app.get("/departments", function (req, res) {
-    res.send("departments");
-    fs.readFile('./data/employees.json', (err, data) => {
-        // if (err) throw err;
-
-        var obj = JSON.parse(data);//json convert to string
-        console.log(obj);
-        // res.json(null);
-    });
+    res.send(dataService.getDepartments())
 });
 
 app.get("/repository", function (req, res) {
@@ -65,18 +77,10 @@ app.get("/contact", function (req, res) {
 });
 
 app.use((req, res) => {
-    res.status(404).send("not found!!!");
+    res.status(404).send("Page not found!!!");
 });
 
-
-//dataService.initialize().then(function(){
- //   app.listen(HTTP_PORT);
-//});
-//dataService.initialize().catch(function () {
-//    app.listen(HTTP_PORT);
-//});
-
-// setup http server to listen on HTTP_PORT
-app.listen(HTTP_PORT, function(){
+app.listen(HTTP_PORT, function () {
     console.log("Express http server listening on 8080");
+    dataService.initialize();
 });
