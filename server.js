@@ -6,6 +6,7 @@ var handlebars = require ('handlebars');
 var dataService = require("./data-service.js");
 const fs = require('fs');
 var multer = require ('multer');
+var bodyParser = require ('body-parser');
 const storage = multer.diskStorage({
     destination: "./public/images/uploaded",
     filename: function(req,file,cb){
@@ -13,6 +14,8 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({storage:storage});
+app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(express.static('public'));
 // setup a 'route' to listen on the default url path
 app.get("/", function(req, res){
@@ -35,20 +38,19 @@ app.get("/images", (req, res) => {//we need to json file step3
     fs.readdir("./public/images/uploaded", function (err, items) {
         console.log(items);
         res.send (items);
-        for (var i = 0; i < items.length; i++) {
-            console.log(items[i]);
-        }
+        
     });
-
 });
 app.get("/employee/add", function (req, res) {
     res.sendFile(path.join(__dirname, "/views/addEmployee.html"));
 });
+app.post("/employees/add",function(req,res){
+    console.log("req.body : "+req.body);
+    dataService.addEmployee(req.body); 
+    res.redirect("/employees");
+});
 app.get("/employees", function (req, res) {
-    fs.readFile('./data/employees.json', (err, data) => {
-        var obj= dataService.getAllEmployees(data);
-        res.send(obj);
-    });
+    res.send(dataService.getAllEmployees());
 });
 app.get("/managers", function (req, res) {
     dataService.getManagers()

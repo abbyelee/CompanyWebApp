@@ -22,8 +22,21 @@ module.exports.initialize = function () {
 }
 
 module.exports.getAllEmployees=function(data){
-    return JSON.parse(data); //json convert to string
+    return employees; //json convert to string
 }
+module.exports.getImages = function () {
+    fileStream.readdir('.public/images/uploaded', (err, data) => {
+        var obj =JSON.parse(data);
+        return obj;
+    });
+}
+
+module.exports.addEmployee=function(employeeData){
+    console.log ("employee Data : " + employeeData);
+    employees[employees.length+1]=employeeData;
+    return employees; 
+}
+
 module.exports.getManagers= function(){
     return new Promise(function (resolve, reject) {
         if (employees.length == 0) {
