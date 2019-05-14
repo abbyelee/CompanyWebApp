@@ -19,18 +19,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 // setup a 'route' to listen on the default url path
 
-//handlebar
-// app.use(function (req, res, next) {
-//     var route = req.baseUrl + req.path;
-//     app.locals.activeRoute = (route == "/") ? "/" : route.replace(/\/$/, "");
-//     next();
-// });
 app.set('view engine', 'hbs');
 app.set('views',__dirname +'/views');
 app.engine('hbs', hbs.express4({
     extname: '.hbs',
     defaultLayout: 'views/layout/main.hbs',
-    layoutsDir: 'views/layout/main.hbs'
 })
 );
 hbs.registerHelper('navLink', function (text, options) {
@@ -42,28 +35,15 @@ hbs.registerHelper('navLink', function (text, options) {
         "<a " + attrs.join(" ") + ">" + text + "</a>"
     );
 });
-// app.engine('hbs', exphbs({
-//     extname: '.hbs',
-//     defaultLayout: 'main',
-//     helpers: {
-//         navLink: function (url, options) {
-//             return '<li' +
-//                 ((url == app.locals.activeRoute) ? ' class="active" ' : '') +
-//                 '><a href="' + url + '">' + options.fn(this) + '</a></li>';
-//         },
-//         equal: function (lvalue, rvalue, options) {
-//             if (arguments.length < 3)
-//                 throw new Error("Handlebars Helper equal needs 2 parameters");
-//             if (lvalue != rvalue) {
-//                 return options.inverse(this);
-//             } else {
-//                 return options.fn(this);
-//             }
-//         }
-
-//     }
-// })
-// );
+hbs.registerHelper('equal', function (lvalue, rvalue, options){
+    if (arguments.length < 3)
+        throw new Error("Handlebars Helper equal needs 2 parameters");
+        if (lvalue != rvalue) {
+            return options.inverse(this);
+        } else {
+            return options.fn(this);
+    }
+})
 
 app.get("/", function(req, res){
     res.render('home');
@@ -94,18 +74,52 @@ app.post("/employees/add",function(req,res){
     res.redirect("/employees");
 });
 app.get("/employees", function (req, res) {
-    var allEmpData = dataService.getAllEmployees();
-    res.render('employees',{employees:allEmpData});
+    if(req.query.department!=null){
+        var employeesByDepartment = dataService.getEmployeeByDepartment(req.query.department);
+        res.render('employees', {employees:employeesByDepartment});
+    }
+    else if (req.query.status=="Full Time"){
+        var employeesByStatus =dataService.getEmployeeByStatus(req.query.status);
+        res.render('employees', { employees: employeesByStatus });
+    }
+    else if (req.query.status == "Part Time") {
+        var employeesByStatus = dataService.getEmployeeByStatus(req.query.status);
+        res.render('employees', { employees: employeesByStatus });
+    }
+    else if (req.query.manager !=null) {
+        var employeesByManager = dataService.getEmployeeByManager(req.query.manager);
+        res.render('employees', { employees: employeesByManager });
+    }    
+    else{
+        var allEmpData = dataService.getAllEmployees();
+        res.render('employees', { employees: allEmpData });
+    }
+    
     //res.send(dataService.getAllEmployees())
 });
 app.get("/managers", function (req, res) {
-    dataService.getManagers()
-        .then(function (manager) {
-            res.json(manager)
-        }).catch(function (errmsg) {
-            console.log(errmsg);
-        });
+    var allManagers = dataService.getManagers();
+    console.log ("in the manager module");
+    console.log(allManagers);
+    res.render('managers', { managers: allManagers });
 });
+app.post("/employee/update",function(req,res){
+    dataService.addEmployee(req.body);
+    res.redirect("/employees");
+});
+app.get("/employee/:value", function(req,res){
+    console.log(req.params.value);
+    var employee = dataService.getEmployeeByNum(req.params.value);
+    res.render('employee',{employee:employee});
+});
+// app.get("/managers", function (req, res) {
+//     dataService.getManagers()
+//         .then(function (manager) {
+//             res.json(manager)
+//         }).catch(function (errmsg) {
+//             console.log(errmsg);
+//         });
+// });
    
 app.get("/departments", function (req, res) {
     var departments = dataService.getDepartments();

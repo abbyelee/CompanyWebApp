@@ -27,6 +27,42 @@ module.exports.getImages = function () {
         return obj;
     });
 }
+module.exports.getEmployeeByNum = function(value){
+    var employee;
+    for(var i=0; i<employees.length; i++){
+        if(employees[i].employeeNum == value){ 
+            employee = employees[i];
+        } 
+    }
+    return employee;
+}
+module.exports.getEmployeeByDepartment = function (value) {
+    var employeeByDep=[];
+    for (var i = 0; i < employees.length; i++) {
+        if (employees[i].department == value) {
+            employeeByDep.push(employees[i]);
+        }
+    }
+    return employeeByDep;
+}
+module.exports.getEmployeeByStatus = function (value) {
+    var employeeByStatus = [];
+    for (var i = 0; i < employees.length; i++) {
+        if (employees[i].status == value) {
+            employeeByStatus.push(employees[i]);
+        }
+    }
+    return employeeByStatus;
+}
+module.exports.getEmployeeByManager = function (value) {
+    var employeeByManager = [];
+    for (var i = 0; i < employees.length; i++) {
+        if (employees[i].employeeManagerNum == value) {
+            employeeByManager.push(employees[i]);
+        }
+    }
+    return employeeByManager;
+}
 
 module.exports.addEmployee=function(employeeData){
     var length = employees.length;
@@ -42,24 +78,13 @@ module.exports.addEmployee=function(employeeData){
 }
 
 module.exports.getManagers= function(){
-    return new Promise(function (resolve, reject) {
-        if (employees.length == 0) {
-            reject("No Results Returned");
+    var managers = [];
+    for (var i = 0; i < employees.length; i++) {
+        if (employees[i].isManager == true) {
+            managers.push(employees[i]);
         }
-        else {
-            var j = 0;
-            var managers = [];
-            for (var i = 0; i < employees.length; i++) {
-                if (employees[i].isManager == true) {
-                    managers[j] = employees[i];
-                    j++;
-                }
-            }            
-            resolve(managers);
-        }
-    });
-
-
+    }
+    return managers;
 }
 module.exports.getDepartments=function(){
     return departments;
