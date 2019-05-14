@@ -32,22 +32,24 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <!--  <li class="active">
-                        <a href="#">Home</a>
-                    </li>-->
-                    {{#navLink "/home"}}Home{{/navLink}}
-                    {{#navLink "/about"}}About{{/navLink}}
-                    {{#navLink "/employees/add"}}Add Employees{{/navLink}}
-                    {{#navLink "/images/add"}}Add image{{/navLink}}
+                   
+                    {{!-- {{#navLink href = '/home'}}Home{{/navLink}} --}}
+                    {{{navLink 'Home' href = '/home'}}}
+                    {{{navLink 'About' href = '/about'}}}
+                    {{{navLink 'Add Employee' href = '/employees/add'}}}
+                    {{{navLink 'Add Image' href = '/images/add'}}}
+                    
 
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    {{#navLink "/employees"}}Employees{{/navLink}}
-                    {{#navLink "/managers"}}Managers{{/navLink}}
-                    {{#navLink "/repository"}}Repository{{/navLink}}
-                    {{#navLink "/git"}}Git{{/navLink}}
-                    {{#navLink "/ir"}}IR{{/navLink}}
-                    {{#navLink "/contact"}}Contact{{/navLink}}
+                    {{{navLink "Employees" href = '/employees'}}}
+                    {{{navLink 'Managers' href = '/managers'}}}
+                    {{{navLink 'Departments' href = '/departments'}}}                    
+                    {{{navLink 'Repository' href = '/repository'}}}
+                    {{{navLink 'Git' href = '/git'}}}
+                    {{{navLink "IR" href = '/ir'}}}
+                    {{{navLink 'Contact' href = '/contact'}}}
+                    
                 </ul>
             </div>
             <!-- /.navbar-collapse -->

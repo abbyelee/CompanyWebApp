@@ -1,10 +1,7 @@
 var localFunction = function (){
-    //a function local to this module
 }
 var localData="";
-//module.exports.initialize()=function(data){
 
-//}
 const fileStream = require('fs');
 var departments =[];
 var employees =[];
@@ -21,7 +18,7 @@ module.exports.initialize = function () {
     
 }
 
-module.exports.getAllEmployees=function(data){
+module.exports.getAllEmployees=function(){
     return employees; //json convert to string
 }
 module.exports.getImages = function () {
@@ -32,8 +29,15 @@ module.exports.getImages = function () {
 }
 
 module.exports.addEmployee=function(employeeData){
-    console.log ("employee Data : " + employeeData);
-    employees[employees.length+1]=employeeData;
+    var length = employees.length;
+    console.log("length : "+ length);
+    employees[length] = employeeData;
+    employees[length].employeeNum = length+1;
+    if(employeeData.isManager ==null){
+        employees[length].isManager=false;
+    }else{
+        employees[length].isManager = true;
+    }
     return employees; 
 }
 
