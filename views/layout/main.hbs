@@ -12,6 +12,21 @@
     <link rel="stylesheet" href="/css/site.css">
     <link href="https://fonts.googleapis.com/css?family=Alegreya|Pacifico|Amaranth|Bitter|Bree+Serif" rel="stylesheet">
     <title>Home</title>
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+           * element that contains the map. */
+        #map {
+            height: 100%;
+        }
+    
+        /* Optional: Makes the sample page fill the window. */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
 </head>
 
 <body>
@@ -45,7 +60,7 @@
                     {{{navLink "Employees" href = '/employees'}}}
                     {{{navLink 'Managers' href = '/managers'}}}
                     {{{navLink 'Departments' href = '/departments'}}}                    
-                    {{{navLink 'Repository' href = '/repository'}}}
+                    {{{navLink 'Images' href = '/images'}}}
                     {{{navLink 'Git' href = '/git'}}}
                     {{{navLink "IR" href = '/ir'}}}
                     {{{navLink 'Contact' href = '/contact'}}}

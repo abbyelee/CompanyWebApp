@@ -44,7 +44,6 @@ hbs.registerHelper('equal', function (lvalue, rvalue, options){
             return options.fn(this);
     }
 })
-
 app.get("/", function(req, res){
     res.render('home');
 });
@@ -63,7 +62,7 @@ app.post("/images/add",upload.single("imageFile"),(req,res) =>{
 app.get("/images", (req, res) => {//we need to json file step3
     fs.readdir("./public/images/uploaded", function (err, items) {
         console.log(items);
-        res.send (items);
+        res.render('images', { items: items });
     });
 });
 app.get("/employees/add", function (req, res) {
@@ -91,24 +90,35 @@ app.get("/employees", function (req, res) {
         res.render('employees', { employees: employeesByManager });
     }    
     else{
-        var allEmpData = dataService.getAllEmployees();
-        res.render('employees', { employees: allEmpData });
-    }
-    
-    //res.send(dataService.getAllEmployees())
+        // console.log ("/employee");
+        // var allEmpData = dataService.getAllEmployees();
+        // res.render('employees', { employees: allEmpData });
+        // console.log(allEmpData);
+        // console.log("End of /employee");
+        dataService.getAllEmployees()
+            .then(function (allEmpData) {
+                res.render("employees", { employees: allEmpData });
+            })
+            .catch(function (errmsg) {
+                res.render("employees", { errmsg: "No result" });
+            })
+    }    
 });
 app.get("/managers", function (req, res) {
     var allManagers = dataService.getManagers();
-    console.log ("in the manager module");
-    console.log(allManagers);
     res.render('managers', { managers: allManagers });
 });
+
 app.post("/employee/update",function(req,res){
-    dataService.addEmployee(req.body);
-    res.redirect("/employees");
+    dataService.updateEmployee(req.body).then(function(){
+        res.redirect("/employees");
+    }).catch(function(errmsg){
+        res.render("employee", { message: "no results" });
+        console.log(errmsg);
+    })
+
 });
 app.get("/employee/:value", function(req,res){
-    console.log(req.params.value);
     var employee = dataService.getEmployeeByNum(req.params.value);
     res.render('employee',{employee:employee});
 });
@@ -124,15 +134,20 @@ app.get("/employee/:value", function(req,res){
 app.get("/departments", function (req, res) {
     var departments = dataService.getDepartments();
     res.render('departments', { dpt: departments});
-    // res.send(dataService.getDepartments())
 });
-
+app.get("/departments/add", function (req, res) {
+    res.render('addDepartment');
+});
+app.post("/departments/add", function (req, res) {
+    var data = req.body;
+    dataService.addDepartment(req.body);
+    res.redirect("/departments");
+});
 app.get("/repository", function (req, res) {
     res.render('repository');
 });
 app.get("/git", function (req, res) {
     res.render('git');
-
 });
 app.get("/ir", function (req, res) {
     res.render('ir');

@@ -19,7 +19,15 @@ module.exports.initialize = function () {
 }
 
 module.exports.getAllEmployees=function(){
-    return employees; //json convert to string
+   // return employees;
+    return new Promise(function (resolve,reject){
+        if (employees.length == 0) {
+            reject("No Results Returned");
+        }
+        else{
+            resolve(employees);
+        }
+    })
 }
 module.exports.getImages = function () {
     fileStream.readdir('.public/images/uploaded', (err, data) => {
@@ -66,7 +74,6 @@ module.exports.getEmployeeByManager = function (value) {
 
 module.exports.addEmployee=function(employeeData){
     var length = employees.length;
-    console.log("length : "+ length);
     employees[length] = employeeData;
     employees[length].employeeNum = length+1;
     if(employeeData.isManager ==null){
@@ -88,5 +95,22 @@ module.exports.getManagers= function(){
 }
 module.exports.getDepartments=function(){
     return departments;
+}
+module.exports.addDepartment=function(departemtData){
+    var length = departments.length;
+    departments[length] = departemtData;
+    departments[length].departmentId = length + 1;    
+    return departments; 
+}
+module.exports.updateEmployee=function(employeeData){
+    return new Promise (function(resolve,reject){
+        if(employees.length==0){
+            reject("No Results Returned. ");
+        }
+        else{
+            employees[employeeData.employeeNum-1] = employeeData;
+            resolve(employees);
+        }
+    })        
 }
 
